@@ -4,9 +4,9 @@ from utils.Multiprocess import MultipleProcessRunner
 from math import ceil
 from utils.fileReader import FileReader
 
-class FastaParser(MultipleProcessRunner):
+class NameExtractor(MultipleProcessRunner):
     def __init__(self, data, outpath, inpath, n_process=1, exclude_indexes=None, exclude_names=None, exclude_out_dir=None):
-        super(FastaParser, self).__init__(data, outpath, n_process)
+        super(NameExtractor, self).__init__(data, outpath, n_process)
         self.exclude_indexes = exclude_indexes
         self.exclude_names = exclude_names
         self.exclude_out_dir = exclude_out_dir
@@ -20,24 +20,12 @@ class FastaParser(MultipleProcessRunner):
         written = 0
         for index in subdata:
             if self.exclude_indexes is not None and index in self.exclude_indexes:
-                # if self.exclude_out_dir is not None:
-                #     # with open(self.exclude_out_dir, "a") as fp:
-                #     #     fp.write(">"+self.get_longname(index, fileReader)+"\n")
-                #     #     fp.write(self.get_seq(index, fileReader)+"\n")
-                #     #     fp.close()
-                content += ">"+self.get_longname(index, fileReader)+"\n"
-                content += self.get_seq(index, fileReader)+"\n"
+                pass
             elif self.exclude_names is not None and self.get_name(index, fileReader) in self.exclude_names:
-                print("exclude")
-                if self.exclude_out_dir is not None:
-                    with open(self.exclude_out_dir, "a") as fp:
-                        fp.write(">"+self.get_longname(index, fileReader)+"\n")
-                        fp.write(self.get_seq(index, fileReader)+"\n")
-                        fp.close()
+                pass
             else:
                 written += 1
-                # content += ">"+self.get_longname(index, fileReader)+"\n"
-                # content += self.get_seq(index, fileReader)+"\n"
+                content += self.get_id(index, fileReader)+"\n"
                 
             if index % 1000 == 0 or index == subdata[-1] or index == 100:
                 with open(sub_path, "a") as fp:
@@ -81,3 +69,5 @@ class FastaParser(MultipleProcessRunner):
         for index in range(self.length):
             name_list.append(self.get_name(index, fr))
         return name_list
+    def get_id(self, index, fr):
+        return fr.get(index*2)[1:-1].split(' ')[0][len("AFDB:AF-"):-3]

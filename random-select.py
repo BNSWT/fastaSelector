@@ -20,7 +20,7 @@ if __name__ == "__main__":
         help="Path to new fasta"
     )
     parser.add_argument(
-        "--pool_size", type=int, default="97",
+        "--pool_size", type=int, default="63",
         help="Number of threads"
     )
     args = parser.parse_args()
@@ -35,5 +35,5 @@ if __name__ == "__main__":
     trash = set(random.sample(range(old_len), old_len//200))
     print(list(trash)[:20])
 
-    selector = FastaParser(range(old.pointer.shape[0]), args.selected_dir, args.old_dir, args.pool_size, exclude_indexes=trash, exclude_out_dir=args.removed_dir)
+    selector = FastaParser(range(old_len), args.removed_dir, args.old_dir, args.pool_size, exclude_indexes=trash)
     selector.run()
